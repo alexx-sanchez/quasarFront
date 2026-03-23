@@ -234,5 +234,8 @@ export default defineConfig((ctx) => {
        */
       extraScripts: [],
     },
+    bin: {
+      linuxAndroidStudio: '/dades/alex/android-studio/bin/studio.sh'
+    }
   };
 });
