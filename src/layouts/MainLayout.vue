@@ -1,20 +1,45 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+    <q-header elevated class="bg-dark text-white">
       <q-toolbar>
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
 
-        <q-toolbar-title> Quasar App </q-toolbar-title>
+        <q-toolbar-title> F1 Teams Manager </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <div v-if="authStore.user" class="row items-center q-gutter-sm">
+          <span class="text-subtitle2 q-mr-sm">
+            Hola, {{ authStore.user.name || authStore.user.login }}
+          </span>
+          <q-btn flat dense round icon="logout" @click="handleLogout" title="Cerrar Sesión" />
+        </div>
+        <div v-else>
+          <q-btn flat label="Iniciar Sesión" to="/login" />
+        </div>
       </q-toolbar>
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <q-list>
-        <q-item-label header> Essential Links </q-item-label>
+        <q-item-label header> Menú Principal </q-item-label>
 
-        <EssentialLink v-for="link in linksList" :key="link.title" v-bind="link" />
+        <q-item clickable v-ripple to="/" exact>
+          <q-item-section avatar>
+            <q-icon name="home" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Inicio</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-item v-if="authStore.user" clickable v-ripple to="/teams" exact>
+          <q-item-section avatar>
+            <q-icon name="sports_motorsports" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Mis Equipos</q-item-label>
+          </q-item-section>
+        </q-item>
+
       </q-list>
     </q-drawer>
 
@@ -26,56 +51,38 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import EssentialLink, { type EssentialLinkProps } from 'components/EssentialLink.vue';
+import { useQuasar } from 'quasar';
+import { useAuthStore } from 'src/stores/auth';
+import { useRouter } from 'vue-router';
 
-const linksList: EssentialLinkProps[] = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev',
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework',
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev',
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev',
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev',
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev',
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev',
-  },
-];
+const $q = useQuasar();
+const authStore = useAuthStore();
+const router = useRouter();
 
 const leftDrawerOpen = ref(false);
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
+}
+
+async function handleLogout() {
+  try {
+    await authStore.logout();
+    $q.notify({
+      type: 'info',
+      message: 'Sesión cerrada correctamente',
+      position: 'top'
+    });
+
+    await router.push('/login'); // <-- Añadimos 'await' aquí
+
+  } catch (error) { // <-- Si prefieres, en JS moderno puedes poner solo 'catch {' sin la variable
+    console.error(error); // <-- Usamos la variable para que el linter no se queje
+    $q.notify({
+      type: 'negative',
+      message: 'Error al cerrar sesión',
+      position: 'top'
+    });
+  }
 }
 </script>
