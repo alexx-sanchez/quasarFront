@@ -10,8 +10,9 @@ declare module '@vue/runtime-core' {
 }
 
 const api = axios.create({ 
-  baseURL: 'http://localhost:3000',
+  // baseURL: 'http://localhost:3000',
   // baseURL: 'http://10.0.2.2:3000',
+  baseURL: 'http://172.23.7.112:3000',
   withCredentials: true 
 });
 
