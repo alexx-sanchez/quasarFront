@@ -45,17 +45,6 @@
               <q-btn label="Entrar" type="submit" color="primary" class="full-width" :loading="loading" />
             </div>
           </q-form>
-
-          <div class="q-mt-md">
-            <q-btn 
-              outline 
-              icon="mdi-github" 
-              label="Entrar con GitHub" 
-              color="dark" 
-              class="full-width" 
-              href="http://localhost:3000/api/auth/github" 
-            />
-          </div>
         </q-tab-panel>
 
         <q-tab-panel name="register">
